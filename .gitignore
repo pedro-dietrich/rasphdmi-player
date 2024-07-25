@@ -1,0 +1,6 @@
+*.o
+src/*.elf
+src/*.hex
+src/*.img
+src/*.list
+src/*.map
