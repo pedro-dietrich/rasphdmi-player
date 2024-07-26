@@ -5,6 +5,12 @@ typedef unsigned short uint16_t;
 typedef unsigned int uint32_t;
 typedef unsigned long uint64_t;
 
+typedef enum
+{
+    true = 1,
+    false = 0
+} bool;
+
 /*
 * @brief Contém a resolução horizontal e vertical de um display
 * físico ou virtual, ou do framebuffer.

@@ -30,3 +30,16 @@ void draw_frame();
 */
 void draw_pixel(color_t color, position_t pos);
 
+/*
+* @brief Obtém a largura do framebuffer, em pixels.
+*
+* @return Resolução horizontal do framebuffer.
+*/
+uint32_t get_framebuffer_width();
+
+/*
+* @brief Obtém a altura do framebuffer, em pixels.
+*
+* @return Resolução vertical do framebuffer.
+*/
+uint32_t get_framebuffer_height();

@@ -129,3 +129,13 @@ void draw_pixel(color_t color, position_t pos)
 
     return;
 }
+
+uint32_t get_framebuffer_width()
+{
+    return framebuffer.width;
+}
+
+uint32_t get_framebuffer_height()
+{
+    return framebuffer.height;
+}

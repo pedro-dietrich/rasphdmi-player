@@ -1,4 +1,6 @@
-*.o
+.vs
+.vscode
+src/*.o
 src/*.elf
 src/*.hex
 src/*.img
