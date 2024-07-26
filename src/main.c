@@ -1,3 +1,4 @@
+#include "framebuffer.h"
 #include "gpio.h"
 
 int main()
@@ -10,6 +11,12 @@ int main()
     gpio_select(26, GPIO_MODE_OUTPUT);
     gpio_select(20, GPIO_MODE_OUTPUT);
     gpio_select(21, GPIO_MODE_OUTPUT);
+
+    // Configura o framebuffer, ou acende o LED em caso de erro
+    if(setup_framebuffer(1366, 768, 24))
+        gpio_set(21);
+
+    draw_frame();
 
     // Trava a CPU, piscando um LED de status
     while(1)
