@@ -29,7 +29,10 @@ typedef struct
 *
 * @param address Endereço base do framebuffer.
 * @param size Tamanho do framebuffer.
+* @param bbp Quantidade de bits por pixel.
 * @param pitch Número de bytes por linha do framebuffer.
+* @param width Resolução horizontal do framebuffer, em pixels.
+* @param width Resolução vertical do framebuffer, em pixels.
 */
 typedef struct
 {
