@@ -1,6 +1,6 @@
 PROJETO = rasphdmi_player
 
-FONTES = boot.s main.c gpio.c mailbox.c framebuffer.c font.c text_renderer.c dma.c
+FONTES = boot.s main.c gpio.c mailbox.c framebuffer.c font.c text_renderer.c dma.c video.c irq.c timer.c
 LDSCRIPT = linker.ld
 
 # Arquivos de saída

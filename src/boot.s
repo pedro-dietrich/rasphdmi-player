@@ -1,6 +1,14 @@
 .global start
 .text
 start:
+    // Carrega o vetor de interrupções em 0x00000000
+    ldr r0, =interrupt_vector
+    mov r1, #0x0
+    ldmia r0!, {r2,r3,r4,r5,r6,r7,r8,r9}
+    stmia r1!, {r2,r3,r4,r5,r6,r7,r8,r9}
+    ldmia r0!, {r2,r3,r4,r5,r6,r7,r8,r9}
+    stmia r1!, {r2,r3,r4,r5,r6,r7,r8,r9}
+
     // Modo supervisor (SVC)
     mov r0, #0xd3
     msr cpsr_c, r0
@@ -21,6 +29,37 @@ done_bss:
 
     // Chama a função main (em main.c)
     b main
+    b halt
 
+// Vetor de interrupções
+interrupt_vector:
+    ldr pc, reset_addr
+    ldr pc, undef_addr
+    ldr pc, swi_addr
+    ldr pc, inst_abort_addr
+    ldr pc, data_abort_addr
+    nop
+    ldr pc, irq_addr
+    ldr pc, fiq_addr
+
+// Endereços das rotinas de interrupções
+reset_addr: .word reset
+undef_addr: .word undef_service
+swi_addr: .word swi_service
+inst_abort_addr: .word inst_abort_service
+data_abort_addr: .word data_abort_service
+irq_addr: .word irq_service
+fiq_addr: .word fiq_service
+
+// Rotinas de interrupções
+reset:
+undef_service:
+swi_service:
+inst_abort_service:
+data_abort_service:
+fiq_service:
+    b halt
+
+// Trava o processador
 halt:
     b halt
