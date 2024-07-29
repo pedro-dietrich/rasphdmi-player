@@ -6,3 +6,4 @@ src/*.hex
 src/*.img
 src/*.list
 src/*.map
+src/video.data

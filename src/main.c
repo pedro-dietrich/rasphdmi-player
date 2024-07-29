@@ -1,5 +1,6 @@
 #include "framebuffer.h"
 #include "gpio.h"
+#include "video.h"
 
 int main()
 {
