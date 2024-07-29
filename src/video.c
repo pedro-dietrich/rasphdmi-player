@@ -1,7 +1,7 @@
 #include "video.h"
 
 // Carrega dados do vídeo no endereço reservado para isso
-VIDEO_DATA =
+__attribute__((section(".video_data"))) const uint8_t video_data[] =
 #include "video.data"
 
 void* get_frame_address(uint32_t frameNumber)

@@ -22,4 +22,9 @@ SECTIONS {
 	heap_addr = .;
 	. = . + 32K;
 	stack_addr = .;
+
+	. = 0x20000;
+	.video_data : {
+		KEEP(*.(video_data))
+	}
 }
