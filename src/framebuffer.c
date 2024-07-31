@@ -1,7 +1,9 @@
 #include "framebuffer.h"
 
-#include "mailbox.h"
+#include "dma.h"
 #include "gpio.h"
+#include "mailbox.h"
+#include "video.h"
 
 framebuffer_t framebuffer;
 
@@ -70,22 +72,25 @@ int setup_framebuffer(uint32_t width, uint32_t height, uint32_t bbp)
     return 0;
 }
 
-void draw_frame()
+void draw_frame(uint32_t frame_number)
 {
     position_t pos = {0, 0};
 
-    gpio_set(6);    // Ativa um LED para indicar que um frame está sendo renderizado.
+    gpio_set(13);   // Ativa um LED para indicar que um frame está sendo renderizado.
 
+    uint8_t* frame_data = (uint8_t*) get_frame_address(frame_number);
+    uint32_t data_pitch = framebuffer.pitch * VIDEO_BPP / DISPLAY_BPP;
     for(pos.y = 0; pos.y < framebuffer.height; pos.y++)
     {
         for(pos.x = 0; pos.x < framebuffer.width; pos.x++)
         {
-            color_t color = {255 * pos.y / framebuffer.height, 0, 255 * pos.x / framebuffer.width};
+            uint8_t c = frame_data[data_pitch * pos.y + pos.x];
+            color_t color = {c, c, c};
             draw_pixel(color, pos);
         }
     }
 
-    gpio_clear(6);  // Desativa o LED para indicar que o frame terminou de ser renderizado.
+    gpio_clear(13); // Desativa o LED para indicar que o frame terminou de ser renderizado.
 
     return;
 }
@@ -103,8 +108,8 @@ void draw_pixel(color_t color, position_t pos)
 
         case 16:
             // Profundidade de 16bbp usa a codificação (RRRRRGGG GGGBBBBB)
-            framebuffer.address[y_offset + 2 * pos.x] = (color.r & 0xF8) | (color.g >> 5);
-            framebuffer.address[y_offset + 2 * pos.x + 1] = (color.g << 3) | (color.b >> 3);
+            framebuffer.address[y_offset + pos.x * 2] = (color.g << 3) | (color.b >> 3);
+            framebuffer.address[y_offset + pos.x * 2 + 1] = (color.r & 0xF8) | (color.g >> 5);
             break;
 
         case 24:

@@ -44,14 +44,14 @@ void gpio_select(uint32_t gpio_num, gpio_select_mode_t mode);
 /*
 * @brief Ativa a saída do GPIO escolhido.
 *
-* @param gpio_num Número do GPIO a ser ativado Deve estar entre 0 e 53.
+* @param gpio_num Número do GPIO a ser ativado. Deve estar entre 0 e 53.
 */
 void gpio_set(uint32_t gpio_num);
 
 /*
 * @brief Desativa a saída do GPIO escolhido.
 *
-* @param gpio_num Número do GPIO a ser desativado Deve estar entre 0 e 53.
+* @param gpio_num Número do GPIO a ser desativado. Deve estar entre 0 e 53.
 */
 void gpio_clear(uint32_t gpio_num);
 

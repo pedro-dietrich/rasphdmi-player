@@ -28,7 +28,7 @@ loop_bss:
 done_bss:
 
     // Chama a função main (em main.c)
-    b main
+    bl main
     b halt
 
 // Vetor de interrupções
@@ -44,21 +44,24 @@ interrupt_vector:
 
 // Endereços das rotinas de interrupções
 reset_addr: .word reset
-undef_addr: .word undef_service
-swi_addr: .word swi_service
-inst_abort_addr: .word inst_abort_service
-data_abort_addr: .word data_abort_service
-irq_addr: .word irq_service
-fiq_addr: .word fiq_service
+undef_addr: .word undef_serv
+swi_addr: .word swi_serv
+inst_abort_addr: .word inst_abort_serv
+data_abort_addr: .word data_abort_serv
+irq_addr: .word irq_serv
+fiq_addr: .word fiq_serv
 
 // Rotinas de interrupções
 reset:
-undef_service:
-swi_service:
-inst_abort_service:
-data_abort_service:
-fiq_service:
+undef_serv:
+swi_serv:
+inst_abort_serv:
+data_abort_serv:
+fiq_serv:
     b halt
+
+irq_serv:
+    bl irq_service
 
 // Trava o processador
 halt:

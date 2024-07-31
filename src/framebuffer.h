@@ -20,7 +20,7 @@ int setup_framebuffer(uint32_t width, uint32_t height, uint32_t bbp);
 /*
 * @brief Envia uma imagem ao framebuffer e exibe no monitor.
 */
-void draw_frame();
+void draw_frame(uint32_t frame_number);
 
 /*
 * @brief Configura a cor de um pixel no framebuffer.
