@@ -67,3 +67,33 @@ void print_screen(const char* text, position_t pos, color_t text_color, bool use
 
     return;
 }
+
+void print_value(uint32_t number, position_t pos, color_t text_color, bool use_bg, color_t bg_color)
+{
+    char text[11];
+
+    uint32_t i = 0;
+    if(number == 0)
+    {
+        text[0] = '0';
+        i++;
+    }
+
+    uint32_t digit_indicator = 1000000000U;
+    bool first_digit = false;
+    while(digit_indicator)
+    {
+        uint32_t digit = (number / digit_indicator) % 10;
+        digit_indicator /= 10;
+        if(digit == 0 && first_digit == false) continue;
+
+        text[i] = digit + 0x30;
+        i++;
+    }
+
+    text[i] = '\0';
+
+    print_screen(text, pos, text_color, use_bg, bg_color);
+
+    return;
+}
