@@ -1,16 +1,65 @@
 #include "dma.h"
 
-bool dma_init_channel(uint32_t channel)
+#include "gpio.h"
+
+static uint16_t channel_map = 0x1F35;
+
+static channel_data_t channels[15];
+
+static uint16_t allocate_channel(uint32_t channel)
+{
+    if(!(channel & ~0xF))
+    {
+        if(channel_map & (1 << channel))
+        {
+            channel_map &= ~(1 << channel);
+            return channel;
+        }
+        return CT_NONE;
+    }
+
+    uint16_t index = (channel == CT_NORMAL) ? 6 : 12;
+    while(index >= 0)
+    {
+        if(channel_map & (1 << index))
+        {
+            channel_map &= ~(1 << index);
+            return index;
+        }
+
+        index--;
+    }
+
+    return CT_NONE;
+}
+
+static void close_channel(uint32_t channel)
+{
+    channel_map |= (1 << channel);
+
+    return;
+}
+
+bool dma_init_channel(uint32_t* channel)
 {
     // Apenas os canais 0 a 14 podem ser utilizados
-    if(channel > 14)
+    if(*channel > 14)
         return false;
 
+    uint16_t c = allocate_channel(*channel);
+    if(c == CT_NONE || c > 14)
+    {
+        gpio_set(20);
+        return false;
+    }
+
+    *channel = c;
+
     // Ativa o canal DMA selecionado
-    *((volatile uint32_t*)DMA_GLOBAL_ENABLE) |= (1 << channel);
+    *((volatile uint32_t*)DMA_GLOBAL_ENABLE) |= (1 << *channel);
 
     // Faz o reset do canal escolhido
-    dma_channel_regs_t* dma_channel_regs = DMA_REGS(channel);
+    dma_channel_regs_t* dma_channel_regs = DMA_REGS(*channel);
     dma_channel_regs->control_and_status = DMA_CS_RESET;
 
     // Espera o reset ser concluído
@@ -67,13 +116,17 @@ bool dma_transfer(uint32_t channel, dma_control_block_t* control_block_ptr)
 
 bool dma_copy(void* src, void* dest, uint32_t size)
 {
-    uint32_t channel = 0;
+    uint32_t channel = CT_NORMAL;
     dma_control_block_t control_block __attribute__((aligned(32)));
 
-    if(!dma_init_channel(channel))
+    if(!dma_init_channel(&channel))
         return false;
 
     dma_setup_mem_copy(&control_block, dest, src, size, DMA_TI_DEFAULT_BURST_LENGTH);
 
-    return dma_transfer(channel, &control_block);
+    bool success = dma_transfer(channel, &control_block);
+
+    close_channel(channel);
+
+    return success;
 }

@@ -85,7 +85,9 @@ void print_value(uint32_t number, position_t pos, color_t text_color, bool use_b
     {
         uint32_t digit = (number / digit_indicator) % 10;
         digit_indicator /= 10;
+
         if(digit == 0 && first_digit == false) continue;
+        first_digit = true;
 
         text[i] = digit + 0x30;
         i++;

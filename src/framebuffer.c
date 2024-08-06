@@ -10,10 +10,15 @@ framebuffer_t framebuffer;
 int setup_framebuffer(uint32_t width, uint32_t height, uint32_t bbp)
 {
     // Buffer para mensagem via mailbox
-    volatile uint32_t __attribute__((aligned(16))) mail[32];
+    volatile uint32_t __attribute__((aligned(16))) mail[288];
+
+    // Paleta de cores preto-e-branco
+    uint32_t __attribute__((aligned(16))) color_palette[256];
+    for(uint32_t i = 0; i < 256; i++)
+        color_palette[i] = (i << 16) | (i << 8) | i;
 
     // Faz uma requisição para configurar o framebuffer e obter dados
-    mail[0] = 4 * 26;           // Tamanho da mensagem via mailbox, em bytes
+    mail[0] = 4 * 288;          // Tamanho da mensagem via mailbox, em bytes
     mail[1] = MB_REQUEST_CODE;  // Mensagem do tipo requisição
 
     mail[2] = MB_TAG_ALLOCATE_FRAMEBUFFER;
@@ -44,13 +49,24 @@ int setup_framebuffer(uint32_t width, uint32_t height, uint32_t bbp)
     mail[23] = 4;   // Tamanho do buffer de valor na requisição, em bytes
     mail[24] = 0;   // Espaço para o pitch (bytes por linha)
 
-    mail[25] = MB_END_TAG;  // Fim da mensagem por mailbox e padding
-    mail[26] = 0;
-    mail[27] = 0;
-    mail[28] = 0;
-    mail[29] = 0;
-    mail[30] = 0;
-    mail[31] = 0;
+    if(bbp == 8)    // Configurar uma paleta de cores para 8 bits por pixel
+    {
+        mail[25] = MB_TAG_SET_PALETTE;
+        mail[26] = 1032;    // Tamanho do buffer de valor, em bytes
+        mail[27] = 1032;    // Tamanho do buffer de valor na requisição, em bytes
+        mail[28] = 0;
+        mail[29] = 256;
+        for(int i = 0; i < 256; i++)
+            mail[i + 30] = color_palette[i];
+
+        mail[287] = MB_END_TAG;
+    }
+    else
+    {
+        mail[25] = MB_END_TAG;  // Fim da mensagem por mailbox e padding
+        for(int i = 26; i < 288; i++)
+            mail[i] = 0;
+    }
 
     // Envia a mensagem e espera o retorno
     mailbox_write(8, mail);
@@ -91,6 +107,33 @@ void draw_frame(uint32_t frame_number)
     }
 
     gpio_clear(13); // Desativa o LED para indicar que o frame terminou de ser renderizado.
+
+    return;
+}
+
+void copy_frame(uint32_t frame_number)
+{
+    gpio_set(19);
+
+    uint64_t* frame_data = (uint64_t*) get_frame_address(frame_number);
+    uint32_t size = FRAME_SIZE / 4;
+    uint64_t* fb_addr_64 = (uint64_t*)framebuffer.address;
+
+    for(uint32_t i = 0; i < size; i++)
+        fb_addr_64[i] = frame_data[i];
+
+    gpio_clear(19);
+
+    return;
+}
+
+void dma_copy_frame(uint32_t frame_number)
+{
+    gpio_set(16);
+
+    dma_copy(get_frame_address(frame_number), framebuffer.address, FRAME_SIZE);
+
+    gpio_clear(16);
 
     return;
 }

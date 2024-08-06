@@ -19,8 +19,26 @@ int setup_framebuffer(uint32_t width, uint32_t height, uint32_t bbp);
 
 /*
 * @brief Envia uma imagem ao framebuffer e exibe no monitor.
+*
+* @param frame_number Índice do frame a ser renderizado.
 */
 void draw_frame(uint32_t frame_number);
+
+/*
+* @brief Copia uma imagem de 8 em 8 bytes ao framebuffer. Mais rápido, mas não
+* garante que as cores estarão corretas.
+*
+* @param frame_number Índice do frame a ser renderizado.
+*/
+void copy_frame(uint32_t frame_number);
+
+/*
+* @brief Copia uma imagem para o framebuffer, usando DMA. Mais rápido, mas não
+* garante que as cores estarão corretas.
+*
+* @param frame_number Índice do frame a ser renderizado.
+*/
+void dma_copy_frame(uint32_t frame_number);
 
 /*
 * @brief Configura a cor de um pixel no framebuffer.

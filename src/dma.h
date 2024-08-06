@@ -5,6 +5,15 @@
 // Adquire o endereço do barramento
 #define BUS_ADDRESS(address) ((address & 0x3FFFFFFF) | 0x40000000)
 
+#define CT_NORMAL 0x81
+#define CT_NONE -1
+
+typedef struct
+{
+    uint32_t channel_number;
+    bool status;
+} channel_data_t;
+
 /*
 * @brief Contém os dados para um bloco de controle.
 *
@@ -103,7 +112,7 @@ typedef struct
 * @return Retorna `true` se o canal DMA estiver pronto para uso,
 * ou `false` caso contrário.
 */
-bool dma_init_channel(uint32_t channel);
+bool dma_init_channel(uint32_t* channel);
 
 /*
 * @brief Configura o bloco de controle com as informações necessárias
