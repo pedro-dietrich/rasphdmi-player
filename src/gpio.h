@@ -60,6 +60,6 @@ void gpio_clear(uint32_t gpio_num);
 *
 * @param gpio_num Número do GPIO a ser lido Deve estar entre 0 e 53.
 *
-* @return Valor obtido do GPIO, ou 0xFFFFFFFF no caso de um GPIO inválido.
+* @return Valor obtido do GPIO, como verdadeiro ou falso.
 */
-uint32_t gpio_read(uint32_t gpio_num);
+bool gpio_read(uint32_t gpio_num);

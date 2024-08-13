@@ -41,13 +41,13 @@ void gpio_clear(uint32_t gpio_num)
     return;
 }
 
-uint32_t gpio_read(uint32_t gpio_num)
+bool gpio_read(uint32_t gpio_num)
 {
     if(gpio_num >= 54U)
-        return 0xFFFFFFFF;
+        return false;
 
     uint32_t reg_offset = gpio_num / 32;
     uint32_t shift_amount = gpio_num % 32;
 
-    return (1 & (((volatile uint32_t*)GPIO_READ)[reg_offset] >> shift_amount));
+    return (1 & (((volatile uint32_t*)GPIO_READ)[reg_offset] >> shift_amount)) ? true : false;
 }

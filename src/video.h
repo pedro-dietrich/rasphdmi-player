@@ -1,14 +1,9 @@
 #pragma once
 
 #include "types.h"
+#include "config.h"
 
 #define VIDEO_ADDRESS 0x00020000
-
-#define VIDEO_WIDTH 192
-#define VIDEO_HEIGHT 144
-#define VIDEO_BPP 8
-#define DISPLAY_BPP 8
-#define FRAME_COUNT 1200
 
 #define VIDEO_BYTES_PER_PIXEL (VIDEO_BPP / 8)
 #define FRAME_SIZE (VIDEO_WIDTH * VIDEO_HEIGHT * VIDEO_BYTES_PER_PIXEL)

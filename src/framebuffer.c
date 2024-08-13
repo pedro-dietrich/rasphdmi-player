@@ -92,10 +92,10 @@ void draw_frame(uint32_t frame_number)
 {
     position_t pos = {0, 0};
 
-    gpio_set(13);   // Ativa um LED para indicar que um frame está sendo renderizado.
+    gpio_set(LED_STATUS_1);   // Ativa um LED para indicar que um frame está sendo renderizado.
 
     uint8_t* frame_data = (uint8_t*) get_frame_address(frame_number);
-    uint32_t data_pitch = framebuffer.pitch * VIDEO_BPP / DISPLAY_BPP;
+    uint32_t data_pitch = framebuffer.pitch * VIDEO_BPP / VIDEO_BPP;
     for(pos.y = 0; pos.y < framebuffer.height; pos.y++)
     {
         for(pos.x = 0; pos.x < framebuffer.width; pos.x++)
@@ -106,14 +106,14 @@ void draw_frame(uint32_t frame_number)
         }
     }
 
-    gpio_clear(13); // Desativa o LED para indicar que o frame terminou de ser renderizado.
+    gpio_clear(LED_STATUS_1); // Desativa o LED para indicar que o frame terminou de ser renderizado.
 
     return;
 }
 
 void copy_frame(uint32_t frame_number)
 {
-    gpio_set(19);
+    gpio_set(LED_STATUS_2);
 
     uint64_t* frame_data = (uint64_t*) get_frame_address(frame_number);
     uint32_t size = FRAME_SIZE / 4;
@@ -122,18 +122,18 @@ void copy_frame(uint32_t frame_number)
     for(uint32_t i = 0; i < size; i++)
         fb_addr_64[i] = frame_data[i];
 
-    gpio_clear(19);
+    gpio_clear(LED_STATUS_2);
 
     return;
 }
 
 void dma_copy_frame(uint32_t frame_number)
 {
-    gpio_set(16);
+    gpio_set(LED_STATUS_3);
 
     dma_copy(get_frame_address(frame_number), framebuffer.address, FRAME_SIZE);
 
-    gpio_clear(16);
+    gpio_clear(LED_STATUS_3);
 
     return;
 }

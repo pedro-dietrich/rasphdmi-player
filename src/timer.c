@@ -6,16 +6,17 @@ volatile uint64_t ticks_ms;
 
 void timer_init(void)
 {
-    TIMER_REGS->pre_divider = 126;
     TIMER_REGS->load_value = 1000;
+    TIMER_REGS->pre_divider = 126;
     TIMER_REGS->control =
         TIMER_CONTROL_FREE_RUNNING |
         TIMER_CONTROL_ENABLE_TIMER |
         TIMER_CONTROL_ENABLE_IRQ |
-        TIMER_CONTROL_USE_32_BIT;
+        TIMER_CONTROL_USE_23_BIT;
 
     IRQ_REGS->enable_basic = IRQ_BASIC_CORE_TIMER;
 
+    asm volatile("cpsie i");
     return;
 }
 

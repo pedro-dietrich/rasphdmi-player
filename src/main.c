@@ -1,3 +1,4 @@
+#include "config.h"
 #include "dma.h"
 #include "framebuffer.h"
 #include "gpio.h"
@@ -11,21 +12,20 @@ void show_status(void);
 
 int main(void)
 {
-restart:
     initialize();
 
     play_video();
 
-    for(uint32_t i = 0; i < 0x00400000; i++);
+    for(uint32_t i = 0; i < 0x00200000; i++);
 
     show_status();
 
     // Trava a CPU, piscando um LED de status
-    while(1)
+    while(true)
     {
-        gpio_set(6);
+        gpio_set(LED_STATUS_0);
         for(uint32_t i = 0; i < 0x0100000; i++);
-        gpio_clear(6);
+        gpio_clear(LED_STATUS_0);
         for(uint32_t i = 0; i < 0x0100000; i++);
     }
 
@@ -35,23 +35,23 @@ restart:
 void initialize(void)
 {
     // Configurar GPIOs de comando
-    gpio_select(2, GPIO_MODE_INPUT);
-    gpio_select(3, GPIO_MODE_INPUT);
+    gpio_select(BUTTON_0, GPIO_MODE_INPUT);
+    gpio_select(BUTTON_1, GPIO_MODE_INPUT);
 
     // Configurar GPIOs a serem utilizadas para depuração
-    gpio_select(6, GPIO_MODE_OUTPUT);
-    gpio_select(13, GPIO_MODE_OUTPUT);
-    gpio_select(19, GPIO_MODE_OUTPUT);
-    gpio_select(16, GPIO_MODE_OUTPUT);
-    gpio_select(26, GPIO_MODE_OUTPUT);
-    gpio_select(20, GPIO_MODE_OUTPUT);
-    gpio_select(21, GPIO_MODE_OUTPUT);
+    gpio_select(LED_STATUS_0, GPIO_MODE_OUTPUT);
+    gpio_select(LED_STATUS_1, GPIO_MODE_OUTPUT);
+    gpio_select(LED_STATUS_2, GPIO_MODE_OUTPUT);
+    gpio_select(LED_STATUS_3, GPIO_MODE_OUTPUT);
+    gpio_select(LED_STATUS_4, GPIO_MODE_OUTPUT);
+    gpio_select(LED_ERROR_0, GPIO_MODE_OUTPUT);
+    gpio_select(LED_ERROR_1, GPIO_MODE_OUTPUT);
 
-    timer_init();
+    //timer_init();
 
     // Configura o framebuffer, ou acende o LED em caso de erro
-    if(setup_framebuffer(VIDEO_WIDTH, VIDEO_HEIGHT, DISPLAY_BPP))
-        gpio_set(21);
+    if(setup_framebuffer(VIDEO_WIDTH, VIDEO_HEIGHT, VIDEO_BPP))
+        gpio_set(LED_ERROR_1);
 
     return;
 }
@@ -70,7 +70,7 @@ void play_video(void)
 void show_status(void)
 {
     if(setup_framebuffer(400, 225, 24))
-        gpio_set(21);
+        gpio_set(LED_ERROR_1);
 
     position_t pos = {0, 0};
     color_t bg_color = {0x00, 0x20, 0xD0};
@@ -111,7 +111,7 @@ void show_status(void)
     print_value(VIDEO_HEIGHT, pos, text2_color, false, bg_color);
     pos.x = 258;
     pos.y += 25;
-    print_value(DISPLAY_BPP, pos, text2_color, false, bg_color);
+    print_value(VIDEO_BPP, pos, text2_color, false, bg_color);
     pos.x = 285;
     pos.y += 25;
     print_value(30, pos, text2_color, false, bg_color);
