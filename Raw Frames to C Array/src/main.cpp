@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 {
     if(argc < 5)
     {
-        std::cerr << "Correct usage:\n\tbin_to_array <width> <height> <bbp> <frame_*.raw>" << std::endl;
+        std::cerr << "Correct usage:\n\tbin_to_array <width> <height> <bpp> <frame_*.raw>" << std::endl;
         return -1;
     }
 
@@ -28,9 +28,9 @@ int main(int argc, char** argv)
     uint32_t frameCount = argc - 4;
     frameInfo.width = std::stoi(argv[1]);
     frameInfo.height = std::stoi(argv[2]);
-    uint32_t bbp = std::stoi(argv[3]);
+    uint32_t bpp = std::stoi(argv[3]);
 
-    frameInfo.bytesPerPixel = bbp / 8;
+    frameInfo.bytesPerPixel = bpp / 8;
     frameInfo.pitch = frameInfo.width * frameInfo.bytesPerPixel;
     frameInfo.expectedSize = frameInfo.pitch * frameInfo.height;
 
